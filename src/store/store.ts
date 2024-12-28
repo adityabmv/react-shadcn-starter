@@ -2,6 +2,7 @@ import { configureStore} from "@reduxjs/toolkit";
 import authSlice from "./slices/auth";
 import courseViewSlice from "./slices/courseViewSlice";
 import {courseApi} from "./services/courseServceApi";
+import listenerMiddleware from "./middleware/listenerMiddleware";
 
 const store = configureStore({
     reducer: {
@@ -11,7 +12,7 @@ const store = configureStore({
     
     },
     middleware: (getDefaultMiddleware) => {
-        return getDefaultMiddleware().concat([courseApi.middleware]);
+        return getDefaultMiddleware().concat([courseApi.middleware,listenerMiddleware.middleware]);
     }
 });
 

@@ -20,9 +20,6 @@ const Home: React.FC = () => {
 
     // Dispatch the action to set the user
     dispatch(setUser(dummyUser));
-    const { data: courses, isFetching, error } = useGetUserCoursesQuery(authUser?.userId ?? '', {
-      skip: !authUser, // Skip fetching if no user is authenticated
-    });
   };
 
   const handleLogout = () => {
@@ -32,16 +29,9 @@ const Home: React.FC = () => {
 
 
   const authUser = useSelector((state: RootState) => state.auth.user);
-  const { data: courses, isFetching, error } = useGetUserCoursesQuery(authUser?.userId ?? '', {
-    skip: !authUser, // Skip fetching if no user is authenticated
-  });
+  const courses =  useSelector((state:RootState) => state.courseView.courses);
 
-  useEffect(() => {
-    if (courses){
-      dispatch(setCourses(courses));
-      
-    }}
-  );
+
 
   return (
     <div>
@@ -61,23 +51,21 @@ const Home: React.FC = () => {
         )}
       </div>
       <div>
-        {isFetching ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p>Error</p>
-        ) : courses ? (
-          <div>
-            <h2>Courses</h2>
-            <ul>
-              {courses.map((course) => (
-                <li key={course.courseId}>{course.name}</li>
-              ))}
-            </ul>
-          </div>
-        ) : (
-          <p>No courses found</p>
-        )}
-        </div>
+        {
+          courses ? (
+            <div>
+              <h2>Courses</h2>
+              <ul>
+                {courses.map((course) => (
+                  <li key={course.courseId}>{course.name}</li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p>No courses available</p>
+          )
+        }
+      </div>
     </div>
   );
 };
