@@ -1,11 +1,14 @@
-import { RouterProvider } from "react-router-dom";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { router } from "./Router";
+import React from 'react';
+import { Provider } from 'react-redux';
+import store from './store/store';
+import Home from './Home';
 
-export default function App() {
+const App: React.FC = () => {
     return (
-        <ThemeProvider>
-            <RouterProvider router={router} />
-        </ThemeProvider>
-    )
-}
+        <Provider store={store}>
+            <Home />
+        </Provider>
+    );
+};
+
+export default App;
