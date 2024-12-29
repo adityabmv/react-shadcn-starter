@@ -24,7 +24,6 @@ interface Course {
     courseInstanceId: string
     name: string;
     description: string;
-    status: ProgressStatus;
 }
 
 interface Module {
@@ -32,7 +31,7 @@ interface Module {
     title: string;
     description: string;
     sequence: number;
-    status: ProgressStatus;
+    progress: ProgressStatus;
 }
 
 interface Section {
@@ -40,7 +39,7 @@ interface Section {
     title: string;
     description: string;
     sequence: number;
-    status: ProgressStatus;
+    progress: ProgressStatus;
 }
 
 interface SectionItem {
@@ -49,7 +48,7 @@ interface SectionItem {
     description: string;
     sequence: number;
     type: ItemType;
-    status: ProgressStatus;
+    progress: ProgressStatus;
     details: Assessment | Video | Article;
 }
 
@@ -150,5 +149,9 @@ const courseViewSlice = createSlice({
     }
 })
 
+export const selectCurrentCourse = (state: {courseView: CourseViewState}) => state.courseView.currentCourse;
+
+export { ProgressStatus, ItemType, QuestionType };
+export type { Course, Module, Section, SectionItem, Question, Option, Assessment, Video, Article, CourseViewState };
 export const { setCourses, setCurrentCourse, setModules, setCurrentModule, setSections, setCurrentSection, setSectionItems, setCurrentSectionItem, setCurrentSectionItemDetails } = courseViewSlice.actions;
 export default courseViewSlice.reducer;

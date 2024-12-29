@@ -52,7 +52,9 @@ const authSlice = createSlice({
     },
 });
 
-
 export const { setUser, logout, setAuthError } = authSlice.actions;
+
+export const selectUserId = (state: { auth: AuthState }) => state.auth.user?.userId;
 export default authSlice.reducer;
+export type { User, AuthState, AuthStatus, UserRole };
 
