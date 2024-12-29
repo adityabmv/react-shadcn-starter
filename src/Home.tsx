@@ -9,7 +9,9 @@ import {
 } from "./store/services/coreApi";
 import {
   useGetCourseProgressQuery,
+  useGetModuleProgressQuery,
   useUpdateCourseProgressMutation,
+  useUpdateModuleProgressMutation,
 } from "./store/services/activityApi";
 import { ProgressStatus } from "./store/services/sdk";
 import { CourseViewState, selectCurrentCourse } from "./store/slices/courseViewSlice";
@@ -17,6 +19,12 @@ import { CourseViewState, selectCurrentCourse } from "./store/slices/courseViewS
 interface CourseProgressProps {
   courseInstanceId: string;
 }
+
+interface ModuleProgressProps {
+  moduleId: string;
+}
+
+
 
 const CourseProgress: React.FC<CourseProgressProps> = ({
   courseInstanceId,
@@ -43,7 +51,7 @@ const CourseProgress: React.FC<CourseProgressProps> = ({
   const handleUpdateProgress = async () => {
     if (userId && courseInstanceId){
       await updateCourseProgress({
-        userId: userId || "", // The user ID associated with the course
+        userId: userId, // The user ID associated with the course
         courseInstanceId, // The course instance ID to update progress for
       });
     }
@@ -72,6 +80,57 @@ const CourseProgress: React.FC<CourseProgressProps> = ({
     </div>
   );
 };
+
+const ModuleProgress: React.FC<ModuleProgressProps> = ({ moduleId }) => {
+  // Fetch the progress of a specific module for the given user.
+  // The query is skipped if the `moduleId` is not provided.
+  const userId = useSelector(selectUserId);
+  const currentCourse = useSelector(selectCurrentCourse);
+
+  const {
+    data: progress,
+    isLoading,
+    isError,
+  } = useGetModuleProgressQuery(
+    { userId: userId || "", courseInstanceId: currentCourse?.courseInstanceId || "", moduleId },
+    {
+      skip: !moduleId && !userId, // Prevent unnecessary fetches when moduleId is missing
+    }
+  );
+
+  // Mutation to update the progress of a specific module for the given user.
+  // This function is used to trigger the progress update.
+  const [updateModuleProgress, { isLoading: isUpdating }] =
+    useUpdateModuleProgressMutation();
+  
+  const handleUpdateProgress = async () => {
+    if (userId && currentCourse?.courseInstanceId && moduleId){
+      await updateModuleProgress({
+        userId: userId, // The user ID associated with the module
+        courseInstanceId: currentCourse.courseInstanceId, // The course instance ID associated with the module
+        moduleId, // The module ID to update progress for
+      });
+    }
+  };
+
+  
+  return (
+    <div>
+      {/* Display the current progress or a fallback message if no progress data is available */}
+      <span>{progress || "No Progress Data"}</span>
+
+      {/* Button to update the course progress */}
+      <button
+        onClick={handleUpdateProgress}
+        disabled={isUpdating} // Disable the button while the update is in progress
+        style={{ marginLeft: "10px" }}
+      >
+        {isUpdating ? "Updating..." : "Update Progress"}{" "}
+        {/* Dynamic button text based on update status */}
+      </button>
+    </div>
+  );
+}
 
 const Home: React.FC = () => {
   const dispatch = useDispatch();
@@ -187,6 +246,7 @@ const Home: React.FC = () => {
               <th>Title</th>
               <th>Description</th>
               <th>Sequence</th>
+              <th>Progress</th>
             </tr>
           </thead>
           <tbody>
@@ -205,6 +265,11 @@ const Home: React.FC = () => {
                   <td>{module.title}</td>
                   <td>{module.description}</td>
                   <td>{module.sequence}</td>
+                  <td>
+                    {authUser?.userId && (
+                      <ModuleProgress moduleId={module.moduleId} />
+                    )}
+                  </td>
                 </tr>
               ))
             )}

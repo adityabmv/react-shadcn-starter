@@ -194,10 +194,15 @@ export const calSDK = {
             await mockDelay(2000);
             return mockProgressData.courses[courseInstanceId] || ProgressStatus.INCOMPLETE;
         },
-        async getModuleProgress(moduleId: string): Promise<ProgressStatus> {
+        async getModuleProgress(userId: string, moduleId: string, courseInstanceId: string): Promise<ProgressStatus> {
             console.log(`Fetching progress for moduleId: ${moduleId}`);
             await mockDelay(2000);
             return mockProgressData.modules[moduleId] || ProgressStatus.INCOMPLETE;
+        },
+        async getSectionProgress(userId: string, sectionId: string, courseInstanceId: string): Promise<ProgressStatus> {
+            console.log(`Fetching progress for sectionId: ${sectionId}`);
+            await mockDelay(2000);
+            return mockData.activity.sectionProgress[sectionId] || ProgressStatus.INCOMPLETE;
         },
         async updateCourseProgress(
             userId: string,
@@ -225,6 +230,18 @@ export const calSDK = {
             await mockDelay(1000);
             mockProgressData.modules[moduleId] = newProgress;
         },
+        async updateSectionProgress(
+            userId: string,
+            courseInstanceId: string,
+            sectionId: string
+        ): Promise<void> {
+            const newProgress = mockData.activity.sectionProgress[sectionId] === ProgressStatus.INCOMPLETE
+                ? ProgressStatus.IN_PROGRESS
+                : ProgressStatus.COMPLETE;
+            console.log(`Updating progress for sectionId: ${sectionId} to ${newProgress}`);
+            await mockDelay(1000);
+            mockData.activity.sectionProgress[sectionId] = newProgress;
+        }
     },
 };
 
