@@ -267,13 +267,38 @@ export const calSDK = {
             userId: string,
             courseInstanceId: string,
             moduleId: string,
-        ): Promise<void> {
+        ): Promise<{ updatedModules: string[], updatedCourse: string }> {
             const newProgress = mockProgressData.modules[moduleId] === ProgressStatus.INCOMPLETE
                 ? ProgressStatus.IN_PROGRESS
                 : ProgressStatus.COMPLETE;
             console.log(`Updating progress for moduleId: ${moduleId} to ${newProgress}`);
             await mockDelay(1000);
             mockProgressData.modules[moduleId] = newProgress;
+
+            // a boolean to know if there is a next module in sequence or not
+            const currentModule = mockData.core.modules.find((module) => module.moduleId === moduleId);
+            const nextModule = mockData.core.modules.find((module) => module.sequence === (currentModule?.sequence ?? 0) + 1);
+
+            // if there is no next module, we update the course progress
+            if (!nextModule) {
+                await calSDK.activity.updateCourseProgress(userId, courseInstanceId);
+            }
+            // if there is a next module, we update the module progress of the next module
+            else {
+                const nextModuleProgress = mockProgressData.modules[nextModule.moduleId] === ProgressStatus.INCOMPLETE
+                    ? ProgressStatus.IN_PROGRESS
+                    : ProgressStatus.COMPLETE;
+                console.log(`Updating progress for next moduleId: ${nextModule.moduleId} to ${nextModuleProgress}`);
+                mockProgressData.modules[nextModule.moduleId] = nextModuleProgress;
+            }
+
+            return {
+                updatedModules: [moduleId, nextModule?.moduleId].filter((id): id is string => !!id),
+                updatedCourse: courseInstanceId,
+            }
+
+            
+
         },
         async updateSectionProgress(
             userId: string,

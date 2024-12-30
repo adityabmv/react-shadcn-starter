@@ -37,19 +37,29 @@ export const activityApi = createApi({
                 { type: "CourseProgress", id: courseInstanceId },
             ],
         }),
-        updateModuleProgress: builder.mutation<void, { userId: string, moduleId: string, courseInstanceId: string }>({
+        updateModuleProgress: builder.mutation<{updatedModules: string[], updatedCourse: string}, { userId: string, moduleId: string, courseInstanceId: string }>({
             queryFn: async ({ userId, courseInstanceId, moduleId }) => {
-                await calSDK.activity.updateModuleProgress(userId, courseInstanceId, moduleId);
-                return { data: undefined };
+                const updatedEntities = await calSDK.activity.updateModuleProgress(userId, courseInstanceId, moduleId);
+                return { data: updatedEntities };
             },
-            invalidatesTags: (result, error, { moduleId }) => [{ type: 'ModuleProgress', id: moduleId }],
+            invalidatesTags: (result, error, { moduleId }) =>{
+                if (!result) return [{ type: 'ModuleProgress' as const, id: moduleId }];
+                const invalidatesTags = [
+                    ...result.updatedModules.map((moduleId: string) => ({ type: 'ModuleProgress' as const, id: moduleId })),
+                    { type: 'CourseProgress' as const, id: result.updatedCourse }
+                ]
+                return invalidatesTags;
+                
+            },
         }),
         updateSectionProgress: builder.mutation<void, { userId: string, courseInstanceId: string, sectionId: string, progress: ProgressStatus }>({
             queryFn: async ({ userId, courseInstanceId, sectionId, progress }) => {
                 await calSDK.activity.updateSectionProgress(userId, courseInstanceId, sectionId);
                 return { data: undefined };
             },
-            invalidatesTags: (result, error, { sectionId }) => [{ type: 'SectionProgress', id: sectionId }],
+            invalidatesTags: (result, error, { sectionId }) => {
+                return [{ type: 'SectionProgress', id: sectionId }]
+            },
         }),
     }),
 });
