@@ -95,6 +95,18 @@ const mockData: {
                 description: "This is module 2",
                 sequence: 2,
             },
+            {
+                moduleId: "m3",
+                title: "Module 3",
+                description: "This is module 3",
+                sequence: 3,
+            },
+            {
+                moduleId: "m4",
+                title: "Module 4",
+                description: "This is module 4",
+                sequence: 4,
+            }
         ],
         sections: [
             {
@@ -109,6 +121,18 @@ const mockData: {
                 description: "This is section 2",
                 sequence: 2,
             },
+            {
+                sectionId: "s3",
+                title: "Section 3",
+                description: "This is section 3",
+                sequence: 3,
+            },
+            {
+                sectionId: "s4",
+                title: "Section 4",
+                description: "This is section 4",
+                sequence: 4,
+            }
         ],
         sectionItems: [
             {
@@ -125,6 +149,20 @@ const mockData: {
                 sequence: 2,
                 type: "VIDEO",
             },
+            {
+                sectionItemId: "si3",
+                title: "Assessment 1",
+                description: "This is assessment 1",
+                sequence: 3,
+                type: "ASSESSMENT",
+            },
+            {
+                sectionItemId: "si4",
+                title: "Article 2",
+                description: "This is article 2",
+                sequence: 4,
+                type: "ARTICLE",
+            }
         ],
         video: {
             videoId: "si1",
@@ -157,6 +195,7 @@ const mockData: {
 const mockProgressData: {
     courses: { [key: string]: ProgressStatus };
     modules: { [key: string]: ProgressStatus };
+    sections: { [key: string]: ProgressStatus };
 } = {
     courses: {
         ci1: ProgressStatus.IN_PROGRESS,
@@ -166,6 +205,12 @@ const mockProgressData: {
         m1: ProgressStatus.COMPLETE,
         m2: ProgressStatus.IN_PROGRESS,
         m3: ProgressStatus.INCOMPLETE,
+        m4: ProgressStatus.INCOMPLETE,
+    },
+    sections: {
+        s1: ProgressStatus.COMPLETE,
+        s2: ProgressStatus.IN_PROGRESS,
+        s3: ProgressStatus.INCOMPLETE,
     },
 };
 
@@ -238,6 +283,7 @@ export const calSDK = {
             const newProgress = mockData.activity.sectionProgress[sectionId] === ProgressStatus.INCOMPLETE
                 ? ProgressStatus.IN_PROGRESS
                 : ProgressStatus.COMPLETE;
+            
             console.log(`Updating progress for sectionId: ${sectionId} to ${newProgress}`);
             await mockDelay(1000);
             mockData.activity.sectionProgress[sectionId] = newProgress;
