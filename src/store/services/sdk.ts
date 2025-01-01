@@ -71,38 +71,32 @@ const mockData: {
         courses: [
             {
                 courseId: "c1",
-                courseInstanceId: "ci1",
+                courseInstanceId: "course",
                 name: "Introduction To Machine Learning",
                 description: "This is course 1",
-            },
-            {
-                courseId: "c2",
-                courseInstanceId: "ci2",
-                name: "Course 2",
-                description: "This is course 2",
-            },
+            }
         ],
         modules: [
             {
-                moduleId: "m1",
+                moduleId: "mod1",
                 title: "Module 1",
                 description: "This is module 1",
                 sequence: 1,
             },
             {
-                moduleId: "m2",
+                moduleId: "mod2",
                 title: "Module 2",
                 description: "This is module 2",
                 sequence: 2,
             },
             {
-                moduleId: "m3",
+                moduleId: "mod3",
                 title: "Module 3",
                 description: "This is module 3",
                 sequence: 3,
             },
             {
-                moduleId: "m4",
+                moduleId: "mod4",
                 title: "Module 4",
                 description: "This is module 4",
                 sequence: 4,
@@ -110,25 +104,25 @@ const mockData: {
         ],
         sections: [
             {
-                sectionId: "s1",
+                sectionId: "sec1",
                 title: "Section 1",
                 description: "This is section 1",
                 sequence: 1,
             },
             {
-                sectionId: "s2",
+                sectionId: "sec2",
                 title: "Section 2",
                 description: "This is section 2",
                 sequence: 2,
             },
             {
-                sectionId: "s3",
+                sectionId: "sec3",
                 title: "Section 3",
                 description: "This is section 3",
                 sequence: 3,
             },
             {
-                sectionId: "s4",
+                sectionId: "sec4",
                 title: "Section 4",
                 description: "This is section 4",
                 sequence: 4,
@@ -136,28 +130,28 @@ const mockData: {
         ],
         sectionItems: [
             {
-                sectionItemId: "si1",
+                sectionItemId: "item1",
                 title: "Article 1",
                 description: "This is article 1",
                 sequence: 1,
                 type: "ARTICLE",
             },
             {
-                sectionItemId: "si2",
+                sectionItemId: "item2",
                 title: "Video 1",
                 description: "This is video 1",
                 sequence: 2,
                 type: "VIDEO",
             },
             {
-                sectionItemId: "si3",
+                sectionItemId: "item3",
                 title: "Assessment 1",
                 description: "This is assessment 1",
                 sequence: 3,
                 type: "ASSESSMENT",
             },
             {
-                sectionItemId: "si4",
+                sectionItemId: "item4",
                 title: "Article 2",
                 description: "This is article 2",
                 sequence: 4,
@@ -165,29 +159,30 @@ const mockData: {
             }
         ],
         video: {
-            videoId: "si1",
-            assessmentId: "ai1",
+            videoId: "item1",
+            assessmentId: "assessment1",
             url: "https://www.youtube.com/watch?v=1",
         },
     },
     activity: {
         courseProgess: {
-            ci1: ProgressStatus.IN_PROGRESS,
-            ci2: ProgressStatus.INCOMPLETE,
+            course: ProgressStatus.IN_PROGRESS,
         },
         moduleProgress: {
-            m1: ProgressStatus.COMPLETE,
-            m2: ProgressStatus.IN_PROGRESS,
-            m3: ProgressStatus.INCOMPLETE,
+            mod1: ProgressStatus.IN_PROGRESS,
+            mod2: ProgressStatus.INCOMPLETE,
+            mod3: ProgressStatus.INCOMPLETE,
         },
         sectionProgress: {
-            s1: ProgressStatus.COMPLETE,
-            s2: ProgressStatus.IN_PROGRESS,
-            s3: ProgressStatus.INCOMPLETE,
+            sec1: ProgressStatus.IN_PROGRESS,
+            sec2: ProgressStatus.COMPLETE,
+            sec3: ProgressStatus.INCOMPLETE,
         },
         sectionItemProgress: {
-            si1: ProgressStatus.COMPLETE,
-            si2: ProgressStatus.IN_PROGRESS,
+            item1: ProgressStatus.IN_PROGRESS,
+            item2: ProgressStatus.INCOMPLETE,
+            item3: ProgressStatus.INCOMPLETE,
+            item4: ProgressStatus.INCOMPLETE,
         },
     },
 };
@@ -196,22 +191,25 @@ const mockProgressData: {
     courses: { [key: string]: ProgressStatus };
     modules: { [key: string]: ProgressStatus };
     sections: { [key: string]: ProgressStatus };
+    sectionItems: { [key: string]: ProgressStatus };
 } = {
     courses: {
-        ci1: ProgressStatus.IN_PROGRESS,
-        ci2: ProgressStatus.COMPLETE,
+        course: ProgressStatus.IN_PROGRESS,
     },
     modules: {
-        m1: ProgressStatus.COMPLETE,
-        m2: ProgressStatus.IN_PROGRESS,
-        m3: ProgressStatus.INCOMPLETE,
-        m4: ProgressStatus.INCOMPLETE,
+        mod1: ProgressStatus.IN_PROGRESS,
+        mod2: ProgressStatus.INCOMPLETE,
+        mod3: ProgressStatus.INCOMPLETE,
+        mod4: ProgressStatus.INCOMPLETE,
     },
     sections: {
-        s1: ProgressStatus.COMPLETE,
-        s2: ProgressStatus.IN_PROGRESS,
-        s3: ProgressStatus.INCOMPLETE,
+        sec1: ProgressStatus.IN_PROGRESS,
+        sec2: ProgressStatus.INCOMPLETE,
     },
+    sectionItems: {
+        item1: ProgressStatus.IN_PROGRESS,
+        item2: ProgressStatus.INCOMPLETE
+    }
 };
 
 const mockDelay = (ms: number) =>

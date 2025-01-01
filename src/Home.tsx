@@ -1,20 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, logout, selectUserId } from "./store/slices/auth"; // import your actions
 import { UserRole } from "./sdk/types/index";
-import { RootState } from "./store/store";
+import { AppDispatch, RootState } from "./store/store";
 import {
   useGetCoursesQuery,
   useGetModulesQuery,
 } from "./store/services/coreApi";
-import {
-  useGetCourseProgressQuery,
-  useGetModuleProgressQuery,
-  useUpdateCourseProgressMutation,
-  useUpdateModuleProgressMutation,
-} from "./store/services/activityApi";
+// import {
+//   activityApi,
+//   useGetCourseProgressQuery,
+//   useGetModuleProgressQuery,
+//   useGetProgressQuery,
+//   useUpdateCourseProgressMutation,
+//   useUpdateModuleProgressMutation,
+// } from "./store/services/activityApi";
 import { ProgressStatus } from "./store/services/sdk";
 import { CourseViewState, selectCurrentCourse } from "./store/slices/courseViewSlice";
+import { useGetCourseProgressQuery } from "./store/services/activityApi";
 
 interface CourseProgressProps {
   courseInstanceId: string;
@@ -132,152 +135,62 @@ const ModuleProgress: React.FC<ModuleProgressProps> = ({ moduleId }) => {
   );
 }
 
+
+
 const Home: React.FC = () => {
-  const dispatch = useDispatch();
-  const authUser = useSelector((state: RootState) => state.auth.user);
-  const currentCourse = useSelector(selectCurrentCourse);
-  const userId = useSelector(selectUserId);
+  const [studentId, setStudentId] = useState('');
+  const [courseInstanceId, setCourseInstanceId] = useState('');
+  const [triggerFetch, setTriggerFetch] = useState(false);
 
-
-  const {
-    data: courses,
-    isLoading,
-    isError,
-  } = useGetCoursesQuery(
-    { userId: userId || "" },
-    {
-      skip: !userId, // Skip query if userId is not available
-    }
+  const { data, error, isLoading } = useGetCourseProgressQuery(
+      { studentId, courseInstanceId },
+      { skip: !triggerFetch } // Skip query until user triggers fetch
   );
 
-  const {
-    data: modules,
-    isLoading: modulesLoading,
-    isError: modulesError,
-  } = useGetModulesQuery(
-    { courseId: currentCourse?.courseId || "" },
-    {
-      skip: !currentCourse?.courseId, // Skip query if courseId is not available
-    }
-  );
-
-  const handleLogin = () => {
-    const dummyUser = {
-      userId: "user-123",
-      userName: "John Doe",
-      role: UserRole.STUDENT,
-      email: "john@gmail.com",
-    };
-    dispatch(setUser(dummyUser));
-  };
-
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleFetchProgress = () => {
+      if (studentId && courseInstanceId) {
+          setTriggerFetch(true);
+      } else {
+          alert('Please provide both student ID and course instance ID.');
+      }
   };
 
   return (
-    <div>
-      <h1>Home</h1>
-      <button onClick={handleLogin}>Login</button>
-      <button onClick={handleLogout}>Logout</button>
-
-      {/* User Info */}
       <div>
-        {authUser ? (
+          <h1>Test getProgress Query</h1>
           <div>
-            <h2>User Info</h2>
-            <p>Username: {authUser.userName}</p>
-            <p>Email: {authUser.email}</p>
-            <p>Role: {authUser.role}</p>
+              <label>
+                  Student ID:
+                  <input
+                      type="text"
+                      value={studentId}
+                      onChange={(e) => setStudentId(e.target.value)}
+                      placeholder="Enter student ID"
+                  />
+              </label>
           </div>
-        ) : (
-          <p>User not logged in</p>
-        )}
-      </div>
+          <div>
+              <label>
+                  Course Instance ID:
+                  <input
+                      type="text"
+                      value={courseInstanceId}
+                      onChange={(e) => setCourseInstanceId(e.target.value)}
+                      placeholder="Enter course instance ID"
+                  />
+              </label>
+          </div>
+          <button onClick={handleFetchProgress}>Fetch Progress</button>
 
-      {/* Courses Table */}
-      <div>
-        <h1>Courses</h1>
-        {isLoading ? (
-          <p>Loading courses...</p>
-        ) : isError ? (
-          <p>Failed to load courses.</p>
-        ) : (
-          <table
-            border={1}
-            style={{ width: "100%", borderCollapse: "collapse" }}
-          >
-            <thead>
-              <tr>
-                <th>Course ID</th>
-                <th>Instance ID</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Progress</th>
-              </tr>
-            </thead>
-            <tbody>
-              {courses?.map((course) => (
-                <tr key={course.courseId}>
-                  <td>{course.courseId}</td>
-                  <td>{course.courseInstanceId}</td>
-                  <td>{course.name}</td>
-                  <td>{course.description}</td>
-                  <td>
-                    {authUser?.userId && (
-                      <CourseProgress
-                        courseInstanceId={course.courseInstanceId}
-                      />
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+          {isLoading && <p>Loading...</p>}
+          {error && <p>Error fetching data: {JSON.stringify(error)}</p>}
+          {data && (
+              <div>
+                  <h2>Progress Data:</h2>
+                  <pre>Course Progress is : {data.progress}</pre>
+              </div>
+          )}
       </div>
-      {/* Modules Table */}
-      <div>
-        <h1>Modules</h1>
-        <table border={1} style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th>Module ID</th>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Sequence</th>
-              <th>Progress</th>
-            </tr>
-          </thead>
-          <tbody>
-            {modulesLoading ? (
-              <tr>
-                <td colSpan={4}>Loading modules...</td>
-              </tr>
-            ) : modulesError ? (
-              <tr>
-                <td colSpan={4}>Failed to load modules.</td>
-              </tr>
-            ) : (
-              modules?.map((module) => (
-                <tr key={module.moduleId}>
-                  <td>{module.moduleId}</td>
-                  <td>{module.title}</td>
-                  <td>{module.description}</td>
-                  <td>{module.sequence}</td>
-                  <td>
-                    {authUser?.userId && (
-                      <ModuleProgress moduleId={module.moduleId} />
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
   );
 };
-
 export default Home;
