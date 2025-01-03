@@ -50,6 +50,13 @@ export interface Module {
     sequence: number; // Sequence order within the course
 }
 
+export interface Section{
+    sectionId: string,
+    title: string,
+    description: string,
+    sequence: number
+}
+
 
 
 const mockData: {
@@ -70,7 +77,7 @@ const mockData: {
     core: {
         courses: [
             {
-                courseId: "c1",
+                courseId: "courseXYZ",
                 courseInstanceId: "course",
                 name: "Introduction To Machine Learning",
                 description: "This is course 1",
@@ -83,24 +90,24 @@ const mockData: {
                 description: "This is module 1",
                 sequence: 1,
             },
-            {
-                moduleId: "mod2",
-                title: "Module 2",
-                description: "This is module 2",
-                sequence: 2,
-            },
-            {
-                moduleId: "mod3",
-                title: "Module 3",
-                description: "This is module 3",
-                sequence: 3,
-            },
-            {
-                moduleId: "mod4",
-                title: "Module 4",
-                description: "This is module 4",
-                sequence: 4,
-            }
+            // {
+            //     moduleId: "mod2",
+            //     title: "Module 2",
+            //     description: "This is module 2",
+            //     sequence: 2,
+            // },
+            // {
+            //     moduleId: "mod3",
+            //     title: "Module 3",
+            //     description: "This is module 3",
+            //     sequence: 3,
+            // },
+            // {
+            //     moduleId: "mod4",
+            //     title: "Module 4",
+            //     description: "This is module 4",
+            //     sequence: 4,
+            // }
         ],
         sections: [
             {
@@ -109,54 +116,54 @@ const mockData: {
                 description: "This is section 1",
                 sequence: 1,
             },
-            {
-                sectionId: "sec2",
-                title: "Section 2",
-                description: "This is section 2",
-                sequence: 2,
-            },
-            {
-                sectionId: "sec3",
-                title: "Section 3",
-                description: "This is section 3",
-                sequence: 3,
-            },
-            {
-                sectionId: "sec4",
-                title: "Section 4",
-                description: "This is section 4",
-                sequence: 4,
-            }
+            // {
+            //     sectionId: "sec2",
+            //     title: "Section 2",
+            //     description: "This is section 2",
+            //     sequence: 2,
+            // },
+            // {
+            //     sectionId: "sec3",
+            //     title: "Section 3",
+            //     description: "This is section 3",
+            //     sequence: 3,
+            // },
+            // {
+            //     sectionId: "sec4",
+            //     title: "Section 4",
+            //     description: "This is section 4",
+            //     sequence: 4,
+            // }
         ],
         sectionItems: [
             {
                 sectionItemId: "item1",
-                title: "Article 1",
-                description: "This is article 1",
-                sequence: 1,
-                type: "ARTICLE",
-            },
-            {
-                sectionItemId: "item2",
                 title: "Video 1",
                 description: "This is video 1",
-                sequence: 2,
+                sequence: 1,
                 type: "VIDEO",
             },
-            {
-                sectionItemId: "item3",
-                title: "Assessment 1",
-                description: "This is assessment 1",
-                sequence: 3,
-                type: "ASSESSMENT",
-            },
-            {
-                sectionItemId: "item4",
-                title: "Article 2",
-                description: "This is article 2",
-                sequence: 4,
-                type: "ARTICLE",
-            }
+            // {
+            //     sectionItemId: "item2",
+            //     title: "Video 1",
+            //     description: "This is video 1",
+            //     sequence: 2,
+            //     type: "VIDEO",
+            // },
+            // {
+            //     sectionItemId: "item3",
+            //     title: "Assessment 1",
+            //     description: "This is assessment 1",
+            //     sequence: 3,
+            //     type: "ASSESSMENT",
+            // },
+            // {
+            //     sectionItemId: "item4",
+            //     title: "Article 2",
+            //     description: "This is article 2",
+            //     sequence: 4,
+            //     type: "ARTICLE",
+            // }
         ],
         video: {
             videoId: "item1",
@@ -227,6 +234,11 @@ export const calSDK = {
             await mockDelay(2000);
             return mockData.core.modules;
         },
+        async getSections(courseId: string, moduleId: string): Promise<Section[]>{
+            console.log()
+            await mockDelay(2000);
+            return mockData.core.sections[moduleId];
+        } 
     },
     activity: {
         async getCourseProgress(
